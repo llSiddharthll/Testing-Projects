@@ -1,10 +1,11 @@
 import logging
 from telegram import Update
 from telegram.ext import (
+    ApplicationBuilder,
     ContextTypes,
     CommandHandler,
     MessageHandler,
-    Filters,
+    filters,
     Updater
 )
 import requests
@@ -90,29 +91,13 @@ def error(update, context):
     
 if __name__ == "__main__":
     
-    PORT = 8443
-    APP_NAME = "tg_ml_bot"
-    
-    TOKEN = "6148804261:AAHxTrxrE6u-aOd7T0kbP4IMcYb9ReojAWk"
-    updater = Updater(
-        TOKEN, use_context=True)
-    dp = updater.dispatcher
-
+    application = (
+        ApplicationBuilder()
+        .token("6148804261:AAHxTrxrE6u-aOd7T0kbP4IMcYb9ReojAWk")
+        .build()
+    )
     start_handler = CommandHandler("bro", start)
-    dp.add_handler(start_handler)
-    dp.add_handler(MessageHandler(Filters.text, chat))
-    dp.add_error_handler(error)
-
-    # Start the Bot
-    # Replace "your_domain_or_ip" with your actual domain or IP address
-    updater.start_webhook(listen="0.0.0.0",  # This allows the bot to listen on all available interfaces
-                      port=PORT,
-                      url_path=APP_NAME)
-
-    # updater.bot.set_webhook(url=settings.WEBHOOK_URL)
-    updater.bot.set_webhook("https://tg-bot-ml-61ffe0f74a2e.herokuapp.com/" + APP_NAME + TOKEN)
-
-    # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
-    updater.idle()
+    application.add_handler(start_handler)
+    application.add_handler(MessageHandler(filters.TEXT, chat))
+    application.add_error_handler(error)
+    application.run_polling()

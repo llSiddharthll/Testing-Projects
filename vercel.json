@@ -1,0 +1,9 @@
+{
+    "functions": {
+      "api/bot": {
+        "runtime": "python3.8",
+        "maxDuration": 10
+      }
+    }
+  }
+  
