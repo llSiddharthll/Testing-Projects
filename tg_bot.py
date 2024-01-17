@@ -6,12 +6,15 @@ from telegram.ext import (
     CommandHandler,
     MessageHandler,
     filters,
-    Updater
+    Updater,
+    CallbackContext
 )
 import requests
 
 API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-large"
 HEADERS = {"Authorization": "Bearer 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"}
+TOKEN = "6148804261:AAHxTrxrE6u-aOd7T0kbP4IMcYb9ReojAWk"
+WEBHOOK_URL = "https://vercel.com/llsiddharthll/testing-projects/Ccnw36iJQ9KvRkjc3Vd4Vh5ingeP/"
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -89,15 +92,19 @@ def error(update, context):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
     
-if __name__ == "__main__":
-    
-    application = (
-        ApplicationBuilder()
-        .token("6148804261:AAHxTrxrE6u-aOd7T0kbP4IMcYb9ReojAWk")
-        .build()
-    )
-    start_handler = CommandHandler("bro", start)
-    application.add_handler(start_handler)
-    application.add_handler(MessageHandler(filters.TEXT, chat))
-    application.add_error_handler(error)
-    application.run_polling()
+
+def main() -> None:
+    updater = Updater(token=TOKEN, use_context=True)
+    dp = updater.dispatcher
+
+    dp.add_handler(CommandHandler("start", start))
+
+    # Set the webhook
+    updater.bot.setWebhook(WEBHOOK_URL)
+
+    # Start the Bot
+    updater.start_polling()
+    updater.idle()
+
+if __name__ == '__main__':
+    main()
