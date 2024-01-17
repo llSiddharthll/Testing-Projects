@@ -86,4 +86,4 @@ if __name__ == "__main__":
     chat_handler = MessageHandler(filters.TEXT, chat)
     application.add_handler(start_handler)
     application.add_handler(chat_handler)
-    application.run_polling()
+    application.run_polling(timeout=10)
