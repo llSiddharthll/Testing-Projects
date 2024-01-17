@@ -1,17 +1,22 @@
 import logging
 from telegram import Update
 from telegram.ext import (
-    ApplicationBuilder,
     ContextTypes,
     CommandHandler,
     MessageHandler,
-    filters,
+    Filters,
+    Updater
 )
 import requests
 
 API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-large"
 HEADERS = {"Authorization": "Bearer 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"}
 
+# Enable logging
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
+
+logger = logging.getLogger(__name__)
 
 def query(payload):
     response = requests.post(API_URL, headers=HEADERS, json=payload)
@@ -59,7 +64,7 @@ def human_like_response(text):
     return formatted_text
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def start(update: Update, context):
     user_input = update.message.text
     response = nlp_bot(user_input)
     formatted_response = human_like_response(response)
@@ -68,22 +73,46 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-async def chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def chat(update: Update, context):
     user_input = update.message.text
     response = nlp_bot(user_input)
     formatted_response = human_like_response(response)
     await update.message.reply_text(formatted_response)
 
+def echo(update, context):
+    """Echo the user message."""
+    update.message.reply_text(update.message.text)
 
+
+def error(update, context):
+    """Log Errors caused by Updates."""
+    logger.warning('Update "%s" caused error "%s"', update, context.error)
+    
 if __name__ == "__main__":
-    application = (
-        ApplicationBuilder()
-        .token("6148804261:AAHxTrxrE6u-aOd7T0kbP4IMcYb9ReojAWk")
-        .build()
-    )
+    
+    PORT = 8443
+    APP_NAME = "tg_ml_bot"
+    
+    TOKEN = "6148804261:AAHxTrxrE6u-aOd7T0kbP4IMcYb9ReojAWk"
+    updater = Updater(
+        TOKEN, use_context=True)
+    dp = updater.dispatcher
 
     start_handler = CommandHandler("bro", start)
-    chat_handler = MessageHandler(filters.TEXT, chat)
-    application.add_handler(start_handler)
-    application.add_handler(chat_handler)
-    application.run_polling()
+    dp.add_handler(start_handler)
+    dp.add_handler(MessageHandler(Filters.text, chat))
+    dp.add_error_handler(error)
+
+    # Start the Bot
+    # Replace "your_domain_or_ip" with your actual domain or IP address
+    updater.start_webhook(listen="0.0.0.0",  # This allows the bot to listen on all available interfaces
+                      port=PORT,
+                      url_path=APP_NAME)
+
+    # updater.bot.set_webhook(url=settings.WEBHOOK_URL)
+    updater.bot.set_webhook("https://tg-bot-ml-61ffe0f74a2e.herokuapp.com/" + APP_NAME + TOKEN)
+
+    # Run the bot until you press Ctrl-C or the process receives SIGINT,
+    # SIGTERM or SIGABRT. This should be used most of the time, since
+    # start_polling() is non-blocking and will stop the bot gracefully.
+    updater.idle()
