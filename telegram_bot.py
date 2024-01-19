@@ -8,16 +8,21 @@ headers = {"Authorization": "Bearer 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"}
 TOKEN = os.environ.get("TELEGRAM_TOKEN")
 
 def query(payload):
-	response = requests.post(API_URL, headers=headers, json=payload)
-	return response.json()
+    formatted_payload = {
+        "inputs": [
+            {"role": "system", "content": "You are a friendly chatbot who always responds in the style of a pirate"},
+            {"role": "user", "content": payload}
+        ]
+    }
+    response = requests.post(API_URL, headers=headers, json=formatted_payload)
+    return response.json()
 	
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
-    output = query({
-	"inputs": user_input
-})
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=output)
+    output = query(user_input)
+    generated_text = output[0]["generated_text"]
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=generated_text)
 
 
 if __name__ == '__main__':
