@@ -45,7 +45,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     try:
         if output_index != -1:
-            output_text = generated_text[output_index + len("'output': '") :].strip(
+            output_text = generated_text[output_index + len("'output': {'text': '") :].strip(
                 "'}\""
             )
 
