@@ -18,7 +18,7 @@ def query(payload):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
-    output = query(user_input)
+    output = query({"input" : user_input})
     generated_text = output
     await context.bot.send_message(chat_id=update.effective_chat.id, text=generated_text)
 
