@@ -32,11 +32,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
     output = query({"input": user_input})
     generated_text = output[0]['generated_text']
-    generated_dict = ast.literal_eval(generated_text)
-    result_text = generated_dict["output"]
+    response = generated_text.replace('<|system|>','').replace('<|user|>','').replace('<|assistant|>','').replace('</s>','')
 
     await context.bot.send_message(
-        chat_id=update.effective_chat.id, text=result_text
+        chat_id=update.effective_chat.id, text=response
     )
 
 
