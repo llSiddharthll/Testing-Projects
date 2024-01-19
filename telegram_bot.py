@@ -31,7 +31,7 @@ def query(payload):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
     output = query({"input": user_input})
-    generated_text = output[0]
+    generated_text = output[0]["generated_text"]
     response = generated_text.replace("<|system|>\n        I am a friendly chatbot who always responds in the style of a pirate and my name is Jade</s>\n        <|user|>\n        {'input': 'hello'}</s>\n        <|assistant|>\n",'')
 
     await context.bot.send_message(
