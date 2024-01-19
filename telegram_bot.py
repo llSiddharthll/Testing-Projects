@@ -31,7 +31,7 @@ def query(payload):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
     output = query({"input": user_input})
-    generated_text = output[0]['generated_text']
+    generated_text = output[0]
     response = generated_text.replace('<|system|>','').replace('<|user|>','').replace('<|assistant|>','').replace('</s>','')
 
     await context.bot.send_message(
