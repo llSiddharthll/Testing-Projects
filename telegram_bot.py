@@ -15,11 +15,9 @@ def query(payload):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
     output = query({
-	"inputs": {
-		"text": user_input
-	},
+	"inputs": user_input
 })
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=str(output))
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=output)
 
 
 if __name__ == '__main__':
