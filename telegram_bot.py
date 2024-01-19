@@ -34,7 +34,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     generated_text = output[0]["generated_text"]
     response = generated_text.replace("""<|system|>
         I am a friendly chatbot who always responds in the style of a pirate and my name is Jade</s>
-        <|user|>""",'').replace("</s>",'').replace("<|assistant|>",'')
+        <|user|>""",'').replace("</s>",'').replace("<|assistant|>",'').replace("\n",'')
 
     await context.bot.send_message(
         chat_id=update.effective_chat.id, text=response
