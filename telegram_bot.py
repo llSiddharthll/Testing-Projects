@@ -40,9 +40,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         generated_text = output[0]["generated_text"]
     except:
         generated_text = output[0]
-    await context.bot.send_chat_action(
-        chat_id=update.effective_chat.id, action="typing"
-    )
     output_index = generated_text.find("'output'")
     code_index = generated_text.find("<|assistant|>")
 
