@@ -8,12 +8,10 @@ headers = {"Authorization": "Bearer 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"}
 TOKEN = os.environ.get("TELEGRAM_TOKEN")
 
 def query(payload):
-    formatted_payload = {
-        "inputs": [
+    formatted_payload = [
             {"role": "system", "content": "You are a friendly chatbot who always responds in the style of a pirate"},
             {"role": "user", "content": payload}
         ]
-    }
     response = requests.post(API_URL, headers=headers, json=formatted_payload)
     return response.json()
 	
