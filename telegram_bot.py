@@ -1,9 +1,15 @@
+import logging
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, filters, MessageHandler
 import requests
 
 API_URL = "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill"
 headers = {"Authorization": "Bearer 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"}
+
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
 
 def query(payload):
 	response = requests.post(API_URL, headers=headers, json=payload)
@@ -23,11 +29,20 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 if __name__ == '__main__':
-    application = ApplicationBuilder().token('6148804261:AAHxTrxrE6u-aOd7T0kbP4IMcYb9ReojAWk').build()
-    
-    start_handler = CommandHandler('bro', start)
-    chat_handler = MessageHandler(filters.TEXT, start)
-    application.add_handler(start_handler)
-    application.add_handler(chat_handler)
-    
-    application.run_polling()
+    try:
+        # Initialize your application
+        application = ApplicationBuilder().token('6148804261:AAHxTrxrE6u-aOd7T0kbP4IMcYb9ReojAWk').build()
+
+        # Set up the handlers
+        start_handler = CommandHandler('bro', start)
+        chat_handler = MessageHandler(filters.TEXT, start)
+
+        # Add the handlers to the application
+        application.add_handler(start_handler)
+        application.add_handler(chat_handler)
+
+        # Run the bot using long polling
+        application.run_polling()
+    except Exception as e:
+        # Log any exceptions
+        logging.error(f"An error occurred: {e}")
