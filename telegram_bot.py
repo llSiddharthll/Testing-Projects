@@ -3,7 +3,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, filters, MessageHandler
 import requests
 
-API_URL = "https://api-inference.huggingface.co/models/2early4coffee/DialoGPT-small-deadpool"
+API_URL = "https://api-inference.huggingface.co/models/gpt2"
 headers = {"Authorization": "Bearer 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"}
 
 
