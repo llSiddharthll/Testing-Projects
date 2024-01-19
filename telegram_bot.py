@@ -20,7 +20,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 	},
 })
 
-    response = output["generated_text"]
+    response = output
     await context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
 
