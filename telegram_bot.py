@@ -18,12 +18,12 @@ TOKEN = os.environ.get("TELEGRAM_TOKEN")
 
 
 def query(payload):
-    formatted_payload =(f"<|system|>
+    formatted_payload =f"""<|system|>
         You are a chatbot who can help code!</s>
         <|user|>
         {payload}</s>
-        <|assistant|>")
-    response = requests.post(API_URL, headers=headers, json=formatted_payload)
+        <|assistant|>"""
+    response = requests.post(API_URL, headers=headers, json={"inputs":formatted_payload})
     return response.json()
 
 
