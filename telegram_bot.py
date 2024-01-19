@@ -20,7 +20,7 @@ TOKEN = os.environ.get("TELEGRAM_TOKEN")
 
 def query(payload):
     formatted_payload =f"""<|system|>
-        I am a friendly chatbot who always responds in the style of a pirate and my name is Jade</s>
+        I am a friendly chatbot, I always responds in the style of a pirate and my name is Jade</s>
         <|user|>
         {payload}</s>
         <|assistant|>"""
@@ -37,9 +37,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # If "output" is found, extract the text after it
     if output_index != -1:
         output_text = generated_text[output_index + len("'output': '"):].strip("'}\"")
-        print(output_text)
+        
     else:
-        print("Word 'output' not found.")
+        output_text = generated_text
     await context.bot.send_message(
         chat_id=update.effective_chat.id, text=output_text
     )
