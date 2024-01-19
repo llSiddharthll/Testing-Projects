@@ -19,18 +19,22 @@ TOKEN = os.environ.get("TELEGRAM_TOKEN")
 
 
 def query(payload):
-    formatted_payload =f"""<|system|>
+    formatted_payload = f"""<|system|>
         I am a friendly chatbot,I am very talkative, I like small conversation and my name is Jade, welcome users with a small phrase</s>
         <|user|>
         {payload}</s>
         <|assistant|>"""
-    response = requests.post(API_URL, headers=headers, json={"inputs":formatted_payload})
+    response = requests.post(
+        API_URL, headers=headers, json={"inputs": formatted_payload}
+    )
     return response.json()
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
-    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
+    await context.bot.send_chat_action(
+        chat_id=update.effective_chat.id, action="typing"
+    )
     output = query({"input": user_input})
     generated_text = output[0]["generated_text"]
     output_index = generated_text.find("'output'")
@@ -38,16 +42,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     try:
         if output_index != -1:
-            output_text = generated_text[output_index + len("'output': '"):].strip("'}\"")
-            
+            output_text = generated_text[output_index + len("'output': '") :].strip(
+                "'}\""
+            )
+
         else:
-            output_text = generated_text[code_index + len("<|assistant|>"):]
+            output_text = generated_text[code_index + len("<|assistant|>") :]
     except:
         output_text = "Sorry! ask me something else please"
 
-    await context.bot.send_message(
-        chat_id=update.effective_chat.id, text=output_text
-    )
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=output_text)
 
 
 if __name__ == "__main__":
