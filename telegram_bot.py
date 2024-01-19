@@ -6,10 +6,6 @@ import requests
 API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-large"
 headers = {"Authorization": "Bearer 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"}
 
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
 
 def query(payload):
 	response = requests.post(API_URL, headers=headers, json=payload)
