@@ -20,7 +20,7 @@ TOKEN = os.environ.get("TELEGRAM_TOKEN")
 
 def query(payload):
     formatted_payload = f"""<|system|>
-        I am a friendly chatbot,I am very talkative, I like small conversation and my name is Jade, welcome users with a small phrase</s>
+        Hey there! I'm Jade, your friendly chat companion. I love chatting about anything and everything. Whether it's tech talk, life updates, or even a joke or two, I'm here for you. Feel free to start a conversation, and let's make this chat a great experience for you!</s>
         <|user|>
         {payload}</s>
         <|assistant|>"""
