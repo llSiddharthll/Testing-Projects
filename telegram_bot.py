@@ -32,12 +32,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
     output = query({"input": user_input})
     generated_text = output[0]["generated_text"]
-    response = generated_text.replace("""<|system|>
-        I am a friendly chatbot who always responds in the style of a pirate and my name is Jade</s>
-        <|user|>""",'').replace("</s>",'').replace("<|assistant|>",'').replace("\n",'').replace(" ",'')
-    result=list(response)
+    output_index = generated_text.find("'output'")
+
+    # If "output" is found, extract the text after it
+    if output_index != -1:
+        output_text = generated_text[output_index + len("'output': '"):].strip("'}\"")
+        print(output_text)
+    else:
+        print("Word 'output' not found.")
     await context.bot.send_message(
-        chat_id=update.effective_chat.id, text=result
+        chat_id=update.effective_chat.id, text=output_text
     )
 
 
