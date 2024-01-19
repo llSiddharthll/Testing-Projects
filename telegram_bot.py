@@ -20,7 +20,7 @@ TOKEN = os.environ.get("TELEGRAM_TOKEN")
 
 def query(payload):
     formatted_payload =f"""<|system|>
-        I am a friendly chatbot, I always responds in the style of a pirate and my name is Jade</s>
+        I am a friendly chatbot,I am very talkative, I like small conversation, I always responds in the style of a pirate and my name is Jade</s>
         <|user|>
         {payload}</s>
         <|assistant|>"""
@@ -33,13 +33,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     output = query({"input": user_input})
     generated_text = output[0]["generated_text"]
     output_index = generated_text.find("'output'")
+    code_index = generated_text.find("<|assistant|>")
 
     # If "output" is found, extract the text after it
     if output_index != -1:
         output_text = generated_text[output_index + len("'output': '"):].strip("'}\"")
         
     else:
-        output_text = generated_text
+        output_text = generated_text[code_index + len("<|assistant|>"):]
     await context.bot.send_message(
         chat_id=update.effective_chat.id, text=output_text
     )
