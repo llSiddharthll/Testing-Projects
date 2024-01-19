@@ -19,7 +19,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 		"text": user_input
 	},
 })
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=output)
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=str(output))
 
 
 if __name__ == '__main__':
