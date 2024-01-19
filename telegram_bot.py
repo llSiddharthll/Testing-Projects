@@ -19,7 +19,7 @@ TOKEN = os.environ.get("TELEGRAM_TOKEN")
 
 def query(payload):
     formatted_payload =f"""<|system|>
-        You are a chatbot who can help code!</s>
+        You are a friendly chatbot who always responds in the style of a pirate</s>
         <|user|>
         {payload}</s>
         <|assistant|>"""
@@ -31,8 +31,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
     output = query({"input": user_input})
     generated_text = output[0]['generated_text']
+    result_text = generated_text[98:].strip()
+
     await context.bot.send_message(
-        chat_id=update.effective_chat.id, text=generated_text
+        chat_id=update.effective_chat.id, text=result_text
     )
 
 
