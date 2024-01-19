@@ -1,3 +1,4 @@
+import ast
 import logging
 from telegram import Update
 from telegram.ext import (
@@ -31,7 +32,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
     output = query({"input": user_input})
     generated_text = output[0]['generated_text']
-    result_text = generated_text["output"]
+    generated_dict = ast.literal_eval(generated_text)
+    result_text = generated_dict["output"]
 
     await context.bot.send_message(
         chat_id=update.effective_chat.id, text=result_text
