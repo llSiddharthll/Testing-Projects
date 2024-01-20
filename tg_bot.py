@@ -1,110 +1,100 @@
+
 import logging
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
     ContextTypes,
     CommandHandler,
-    MessageHandler,
     filters,
-    Updater,
-    CallbackContext
+    MessageHandler,
 )
 import requests
+import io
 
-API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-large"
-HEADERS = {"Authorization": "Bearer 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"}
+API_URL = (
+    "https://api-inference.huggingface.co/models/openchat/openchat-3.5-0106"
+)
+IMAGE_API_URL = (
+    "https://api-inference.huggingface.co/models/cagliostrolab/animagine-xl-3.0"
+)
+headers = {"Authorization": "Bearer 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"}
+""" TOKEN = os.environ.get("TELEGRAM_TOKEN") """
 TOKEN = "6148804261:AAHxTrxrE6u-aOd7T0kbP4IMcYb9ReojAWk"
-WEBHOOK_URL = "https://vercel.com/llsiddharthll/testing-projects/Ccnw36iJQ9KvRkjc3Vd4Vh5ingeP/"
-
-# Enable logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
-
-logger = logging.getLogger(__name__)
 
 def query(payload):
-    response = requests.post(API_URL, headers=HEADERS, json=payload)
+    formatted_payload = f"""
+        GPT4 Correct User: Hello<|end_of_turn|>
+        GPT4 Correct Assistant: Hi<|end_of_turn|>
+        GPT4 Correct User: What is your name?<|end_of_turn|>
+        GPT4 Correct Assistant: My name is Jade, I am a conversational bot made by Siddharth<|end_of_turn|>
+        GPT4 Correct User: {payload}<|end_of_turn|>
+        GPT4 Correct Assistant: 
+        """
+    response = requests.post(
+        API_URL, headers=headers, json={"inputs": formatted_payload}
+    )
     return response.json()
 
 
-def nlp_bot(messages):
-    output = query(
-        {
-            "inputs": {
-                "past_user_inputs": [
-                    "what is your name ?",
-                    "What's your favorite movie?",
-                    "Tell me a joke.",
-                    "Do you believe in aliens?",
-                ],
-                "generated_responses": [
-                    "My name's Jade the assassin, who are you ?",
-                    "I don't watch movies, but I heard 'The Shawshank Redemption' is great.",
-                    "Why did the computer go to therapy? It had too many bytes of emotional baggage.",
-                    "I'm not sure about aliens, but I believe in a good Wi-Fi connection.",
-                    
-                ],
-                "text": messages,
-            },
-        }
-    )
-
-    generated_text = output["generated_text"]
-    return generated_text
+def query_image(payload):
+    response = requests.post(IMAGE_API_URL, headers=headers, json=payload)
+    return response.content
 
 
-def human_like_response(text):
-    # Add post-processing to make the response more concise and human-like
-    # You can customize this based on your preferences
-    formatted_text = text.strip().capitalize()
-
-    # Remove unnecessary line breaks
-    formatted_text = formatted_text.replace("\n", " ")
-
-    # Add a period at the end if it doesn't already have punctuation
-    if not formatted_text.endswith((".", "!", "?")):
-        formatted_text += "."
-
-    return formatted_text
-
-
-async def start(update: Update, context):
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
-    response = nlp_bot(user_input)
-    formatted_response = human_like_response(response)
-    await context.bot.send_message(
-        chat_id=update.effective_chat.id, text=formatted_response
-    )
+    if user_input.lower().startswith(("jade", "/bro", "bro", "bot")):
+        await context.bot.send_chat_action(
+            chat_id=update.effective_chat.id, action="typing"
+        )
+        user_input = ' '.join(user_input.split()[1:])
+        output = query(user_input)
+        generated_text = output[0]["generated_text"]
+        output_index = generated_text.find(user_input)
+        output_text = generated_text[output_index + len(user_input):]
+        lines = output_text.split('\n')
+        result_output = '\n'.join(lines[2:])
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=result_output,
+            reply_to_message_id=update.message.message_id,
+        )
+
+    if user_input.lower().startswith(("generate", "make")):
+        await context.bot.send_chat_action(
+            chat_id=update.effective_chat.id, action="typing"
+        )
+        try:
+            image_bytes = query_image({"inputs": user_input})  
+            image = io.BytesIO(image_bytes)
+            image.seek(0)
+            await context.bot.send_photo(
+                chat_id=update.effective_chat.id,
+                photo=image,
+                reply_to_message_id=update.message.message_id,
+            )
+        except:
+            await context.bot.send_photo(
+                chat_id=update.effective_chat.id,
+                photo="Sorry I cannot generate it, try something else please!",
+                reply_to_message_id=update.message.message_id,
+            )
 
 
-async def chat(update: Update, context):
-    user_input = update.message.text
-    response = nlp_bot(user_input)
-    formatted_response = human_like_response(response)
-    await update.message.reply_text(formatted_response)
+if __name__ == "__main__":
+    try:
+        # Initialize your application
+        application = ApplicationBuilder().token(TOKEN).build()
 
-def echo(update, context):
-    """Echo the user message."""
-    update.message.reply_text(update.message.text)
+        # Set up the handlers
+        start_handler = CommandHandler("bro", start)
+        application.add_handler(start_handler)
+        chat_handler = MessageHandler(filters.TEXT, start)
+        application.add_handler(chat_handler)
+        image_handler = CommandHandler("generate", start)
+        application.add_handler(image_handler)
 
-
-def error(update, context):
-    """Log Errors caused by Updates."""
-    logger.warning('Update "%s" caused error "%s"', update, context.error)
-    
-
-def main() -> None:
-    updater = Updater(token=TOKEN, use_context=True)
-    dp = updater.dispatcher
-
-    dp.add_handler(CommandHandler("start", start))
-
-    # Set the webhook
-    updater.bot.setWebhook(WEBHOOK_URL)
-
-    # Start the Bot
-    updater.start_polling()
-    updater.idle()
-
-if __name__ == '__main__':
-    main()
+        application.run_polling()
+    except Exception as e:
+        # Log any exceptions
+        logging.error(f"An error occurred: {e}")
