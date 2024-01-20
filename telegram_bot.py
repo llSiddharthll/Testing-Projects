@@ -39,23 +39,36 @@ def query_image(payload):
     response = requests.post(IMAGE_API_URL, headers=headers, json=payload)
     return response.content
 
-
 async def image_generator(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
-    if user_input.lower().startswith(("generate","make")):
+    if user_input.lower().startswith(("generate", "make")):
         await context.bot.send_chat_action(
             chat_id=update.effective_chat.id, action="typing"
         )
-        image_bytes = query_image(
-            {
-                "inputs": user_input,
-            }
-        )
-        await context.bot.send_photo(
-            chat_id=update.effective_chat.id,
-            photo=io.BytesIO(image_bytes),
-            reply_to_message_id=update.message.message_id,
-        )
+
+        try:
+            image_bytes = query_image({"inputs": user_input})  # Retrieve image bytes
+
+            # Option 1: Save the image to a file
+            filename = f"generated_image_{update.message.message_id}.jpg"
+            with open(filename, "wb") as f:
+                f.write(image_bytes)
+            print(f"Image saved to file: {filename}")
+
+            # Option 2: Send the image directly to Telegram
+            await context.bot.send_photo(
+                chat_id=update.effective_chat.id,
+                photo=io.BytesIO(image_bytes),
+                reply_to_message_id=update.message.message_id,
+            )
+
+        except Exception as e:
+            logging.error(f"Error during image generation: {e}")
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text="Sorry, I couldn't generate the image. Please try again later.",
+                reply_to_message_id=update.message.message_id,
+            )
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
