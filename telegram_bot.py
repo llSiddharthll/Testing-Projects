@@ -16,7 +16,7 @@ from PIL import Image
 API_URL = (
     "https://api-inference.huggingface.co/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 )
-Image_API_URL = "https://api-inference.huggingface.co/models/cagliostrolab/animagine-xl-3.0"
+Image_API_URL = ("https://api-inference.huggingface.co/models/cagliostrolab/animagine-xl-3.0")
 headers = {"Authorization": "Bearer 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"}
 TOKEN = os.environ.get("TELEGRAM_TOKEN")
 
@@ -42,7 +42,7 @@ async def image(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(
         chat_id=update.effective_chat.id, action="typing"
     )
-    image_bytes = query({
+    image_bytes = query_image({
     "inputs": user_input,
     })
     output = Image.open(io.BytesIO(image_bytes))
