@@ -44,7 +44,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     code_index = generated_text.find("<|assistant|>")
 
     try:
-        if output_index != -1:
+        if output_index:
             output_text = generated_text[output_index + len("'output': '") :].strip(
                 "'}\""
             )
@@ -54,7 +54,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except:
         output_text = "Sorry! ask me something else please"
 
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=output_text)
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=output_text, reply_to_message_id=update.message.message_id,  )
 
 
 if __name__ == "__main__":
