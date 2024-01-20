@@ -16,7 +16,7 @@ API_URL = (
     "https://api-inference.huggingface.co/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 )
 IMAGE_API_URL = (
-    "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
+    "https://api-inference.huggingface.co/models/cagliostrolab/animagine-xl-3.0"
 )
 headers = {"Authorization": "Bearer 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"}
 TOKEN = os.environ.get("TELEGRAM_TOKEN")
