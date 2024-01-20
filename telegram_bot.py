@@ -31,35 +31,34 @@ def query(payload):
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if context.bot.id in update.message.text_mentions or update.message.reply_to_message:
-        user_input = update.message.text
+    user_input = update.message.text
 
-        # Show initial typing action
-        await context.bot.send_chat_action(
-            chat_id=update.effective_chat.id, action="typing"
-        )
-        output = query({"input": user_input})
-        try:
-            generated_text = output[0]["generated_text"]
-        except:
-            generated_text = output
+    # Show initial typing action
+    await context.bot.send_chat_action(
+        chat_id=update.effective_chat.id, action="typing"
+    )
+    output = query({"input": user_input})
+    try:
+        generated_text = output[0]["generated_text"]
+    except:
+        generated_text = output
 
-        try:
-            output_index = generated_text.find("'output'")
-        except:
-            output_index = generated_text.find("<|assistant|>")
-        try:
-            if output_index:
-                output_text = generated_text[output_index + len("'output':'") :].strip(
-                    "'}\""
-                )
+    try:
+        output_index = generated_text.find("'output'")
+    except:
+        output_index = generated_text.find("<|assistant|>")
+    try:
+        if output_index:
+            output_text = generated_text[output_index + len("'output':'") :].strip(
+                "'}\""
+            )
 
-            else:
-                output_text = generated_text[output_index + len("<|assistant|>") :]
-        except:
-            output_text = generated_text
+        else:
+            output_text = generated_text[output_index + len("<|assistant|>") :]
+    except:
+        output_text = generated_text
 
-        await context.bot.send_message(chat_id=update.effective_chat.id, text=output_text, reply_to_message_id=update.message.message_id,  )
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=output_text, reply_to_message_id=update.message.message_id,  )
 
 
 if __name__ == "__main__":
