@@ -32,7 +32,7 @@ def query(payload):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
-    if user_input.lower().startswith(("itachi", "/bro", "bro", "bot")):
+    if user_input.lower().startswith(("jade", "/bro", "bro", "bot")):
         # Show initial typing action
         await context.bot.send_chat_action(
             chat_id=update.effective_chat.id, action="typing"
