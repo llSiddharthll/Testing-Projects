@@ -16,7 +16,7 @@ from PIL import Image
 API_URL = (
     "https://api-inference.huggingface.co/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 )
-Image_API_URL = ("https://api-inference.huggingface.co/models/cagliostrolab/animagine-xl-3.0")
+IMAGE_API_URL = ("https://api-inference.huggingface.co/models/cagliostrolab/animagine-xl-3.0")
 headers = {"Authorization": "Bearer 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"}
 TOKEN = os.environ.get("TELEGRAM_TOKEN")
 
@@ -33,11 +33,11 @@ def query(payload):
     return response.json()
 
 def query_image(payload):
-    response = requests.post(Image_API_URL, headers=headers, json=payload)
+    response = requests.post(IMAGE_API_URL, headers=headers, json=payload)
     return response.content
 
 
-async def image(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def image_generator(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
     await context.bot.send_chat_action(
         chat_id=update.effective_chat.id, action="typing"
@@ -93,9 +93,7 @@ if __name__ == "__main__":
         chat_handler = MessageHandler(
             filters.TEXT, start
         )
-        image_handler = CommandHandler(
-            "generate", image
-        )
+        image_handler = CommandHandler("generate", image_generator)
 
         # Add the handlers to the application
         application.add_handler(start_handler)
