@@ -31,35 +31,35 @@ def query(payload):
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_input = update.message.text
-    await context.bot.send_chat_action(
-        chat_id=update.effective_chat.id, action="typing"
-    )
-    await context.bot.send_chat_action(
-        chat_id=update.effective_chat.id, action="typing"
-    )
-    output = query({"input": user_input})
-    try:
-        generated_text = output[0]["generated_text"]
-    except:
-        generated_text = output
+    if context.bot.id in update.message.text_mentions or update.message.reply_to_message:
+        user_input = update.message.text
 
-    try:
-        output_index = generated_text.find("'output'")
-    except:
-        output_index = generated_text.find("<|assistant|>")
-    try:
-        if output_index:
-            output_text = generated_text[output_index + len("'output':'") :].strip(
-                "'}\""
-            )
+        # Show initial typing action
+        await context.bot.send_chat_action(
+            chat_id=update.effective_chat.id, action="typing"
+        )
+        output = query({"input": user_input})
+        try:
+            generated_text = output[0]["generated_text"]
+        except:
+            generated_text = output
 
-        else:
-            output_text = generated_text[output_index + len("<|assistant|>") :]
-    except:
-        output_text = generated_text
+        try:
+            output_index = generated_text.find("'output'")
+        except:
+            output_index = generated_text.find("<|assistant|>")
+        try:
+            if output_index:
+                output_text = generated_text[output_index + len("'output':'") :].strip(
+                    "'}\""
+                )
 
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=output_text, reply_to_message_id=update.message.message_id,  )
+            else:
+                output_text = generated_text[output_index + len("<|assistant|>") :]
+        except:
+            output_text = generated_text
+
+        await context.bot.send_message(chat_id=update.effective_chat.id, text=output_text, reply_to_message_id=update.message.message_id,  )
 
 
 if __name__ == "__main__":
@@ -69,7 +69,9 @@ if __name__ == "__main__":
 
         # Set up the handlers
         start_handler = CommandHandler("bro", start)
-        chat_handler = MessageHandler(filters.TEXT, start)
+        chat_handler = MessageHandler(
+            filters.TEXT & (filters.MENTION | filters.REPLY), start
+        ) 
 
         # Add the handlers to the application
         application.add_handler(start_handler)
