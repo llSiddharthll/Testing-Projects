@@ -10,6 +10,7 @@ from telegram.ext import (
 )
 import requests
 import os
+import asyncio
 
 API_URL = (
     "https://api-inference.huggingface.co/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0"
@@ -35,14 +36,21 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(
         chat_id=update.effective_chat.id, action="typing"
     )
+    for _ in range(5):  # Adjust the range based on the desired duration
+        await asyncio.sleep(1)  # Sleep for 1 second between typing actions
+        await context.bot.send_chat_action(
+            chat_id=update.effective_chat.id, action="typing"
+        )
     output = query({"input": user_input})
     try:
         generated_text = output[0]["generated_text"]
     except:
         generated_text = output
-    output_index = generated_text.find("'output'")
-    code_index = generated_text.find("<|assistant|>")
 
+    try:
+        output_index = generated_text.find("'output'")
+    except:
+        code_index = generated_text.find("<|assistant|>")
     try:
         if output_index:
             output_text = generated_text[output_index + len("'output': '") :].strip(
