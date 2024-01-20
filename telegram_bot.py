@@ -10,10 +10,13 @@ from telegram.ext import (
 )
 import requests
 import os
+import io
+from PIL import Image
 
 API_URL = (
     "https://api-inference.huggingface.co/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 )
+Image_API_URL = "https://api-inference.huggingface.co/models/cagliostrolab/animagine-xl-3.0"
 headers = {"Authorization": "Bearer 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"}
 TOKEN = os.environ.get("TELEGRAM_TOKEN")
 
@@ -28,6 +31,20 @@ def query(payload):
         API_URL, headers=headers, json={"inputs": formatted_payload}
     )
     return response.json()
+
+def query_image(payload):
+    response = requests.post(API_URL, headers=headers, json=payload)
+    return response.content
+
+
+async def image(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_input = update.message.text
+    if user_input.lower().startswith(("generate","make")):
+        image_bytes = query({
+        "inputs": user_input,
+        })
+        output = Image.open(io.BytesIO(image_bytes))
+        await context.bot.send_message(chat_id=update.effective_chat.id, text=output, reply_to_message_id=update.message.message_id)
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -61,7 +78,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         except:
             output_text = generated_text
 
-        await context.bot.send_message(chat_id=update.effective_chat.id, text=output_text, reply_to_message_id=update.message.message_id,  )
+        await context.bot.send_message(chat_id=update.effective_chat.id, text=output_text, reply_to_message_id=update.message.message_id)
 
 
 if __name__ == "__main__":
@@ -74,10 +91,14 @@ if __name__ == "__main__":
         chat_handler = MessageHandler(
             filters.TEXT, start
         )
+        image_handler = MessageHandler(
+            filters.TEXT, image
+        )
 
         # Add the handlers to the application
         application.add_handler(start_handler)
         application.add_handler(chat_handler)
+        application.add_handler(image_handler)
 
         # Run the bot using long polling
         application.run_polling()
