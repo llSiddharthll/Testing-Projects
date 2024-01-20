@@ -54,6 +54,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             output_index = generated_text.find("<|assistant|>")
     except:
         output_index = generated_text
+        output_index = output_index.find("<|assistant|>")
     try:
         if output_index:
             output_text = generated_text[output_index + len("'output': '") :].strip(
