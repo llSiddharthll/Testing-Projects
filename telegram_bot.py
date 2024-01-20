@@ -50,10 +50,9 @@ async def image_generator(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "inputs": user_input,
         }
     )
-    output = Image.open(io.BytesIO(image_bytes))
-    await context.bot.send_message(
+    await context.bot.send_photo(
         chat_id=update.effective_chat.id,
-        text=output,
+        photo=io.BytesIO(image_bytes),
         reply_to_message_id=update.message.message_id,
     )
 
