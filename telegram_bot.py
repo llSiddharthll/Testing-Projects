@@ -43,23 +43,14 @@ async def image_generator(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_chat_action(
             chat_id=update.effective_chat.id, action="typing"
         )
-
-        try:
-            image_bytes = query_image({"inputs": user_input})  # Retrieve image bytes
-            image = io.BytesIO(image_bytes)
-            await context.bot.send_photo(
-                chat_id=update.effective_chat.id,
-                photo=image,
-                reply_to_message_id=update.message.message_id,
-            )
-
-        except Exception as e:
-            logging.error(f"Error during image generation: {e}")
-            await context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text="Sorry, I couldn't generate the image. Please try again later.",
-                reply_to_message_id=update.message.message_id,
-            )
+        image_bytes = query_image({"inputs": user_input})  
+        image = io.BytesIO(image_bytes)
+        image.seek(0)
+        await context.bot.send_photo(
+            chat_id=update.effective_chat.id,
+            photo=image,
+            reply_to_message_id=update.message.message_id,
+        )
 
 
 
