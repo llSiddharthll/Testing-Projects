@@ -79,14 +79,21 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_chat_action(
             chat_id=update.effective_chat.id, action="typing"
         )
-        image_bytes = query_image({"inputs": user_input})  
-        image = io.BytesIO(image_bytes)
-        image.seek(0)
-        await context.bot.send_photo(
-            chat_id=update.effective_chat.id,
-            photo=image,
-            reply_to_message_id=update.message.message_id,
-        )
+        try:
+            image_bytes = query_image({"inputs": user_input})  
+            image = io.BytesIO(image_bytes)
+            image.seek(0)
+            await context.bot.send_photo(
+                chat_id=update.effective_chat.id,
+                photo=image,
+                reply_to_message_id=update.message.message_id,
+            )
+        except:
+            await context.bot.send_photo(
+                chat_id=update.effective_chat.id,
+                photo="Sorry I cannot generate it, try something else please!",
+                reply_to_message_id=update.message.message_id,
+            )
 
 
 if __name__ == "__main__":
