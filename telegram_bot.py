@@ -39,12 +39,14 @@ def query_image(payload):
 
 async def image(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
-    if user_input.lower().startswith(("generate","make")):
-        image_bytes = query({
-        "inputs": user_input,
-        })
-        output = Image.open(io.BytesIO(image_bytes))
-        await context.bot.send_message(chat_id=update.effective_chat.id, text=output, reply_to_message_id=update.message.message_id)
+    await context.bot.send_chat_action(
+        chat_id=update.effective_chat.id, action="typing"
+    )
+    image_bytes = query({
+    "inputs": user_input,
+    })
+    output = Image.open(io.BytesIO(image_bytes))
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=output, reply_to_message_id=update.message.message_id)
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -91,8 +93,8 @@ if __name__ == "__main__":
         chat_handler = MessageHandler(
             filters.TEXT, start
         )
-        image_handler = MessageHandler(
-            filters.TEXT, image
+        image_handler = CommandHandler(
+            "generate", image
         )
 
         # Add the handlers to the application
