@@ -16,7 +16,9 @@ from PIL import Image
 API_URL = (
     "https://api-inference.huggingface.co/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 )
-IMAGE_API_URL = ("https://api-inference.huggingface.co/models/cagliostrolab/animagine-xl-3.0")
+IMAGE_API_URL = (
+    "https://api-inference.huggingface.co/models/cagliostrolab/animagine-xl-3.0"
+)
 headers = {"Authorization": "Bearer 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"}
 TOKEN = os.environ.get("TELEGRAM_TOKEN")
 
@@ -32,6 +34,7 @@ def query(payload):
     )
     return response.json()
 
+
 def query_image(payload):
     response = requests.post(IMAGE_API_URL, headers=headers, json=payload)
     return response.content
@@ -42,11 +45,17 @@ async def image_generator(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(
         chat_id=update.effective_chat.id, action="typing"
     )
-    image_bytes = query_image({
-    "inputs": user_input,
-    })
+    image_bytes = query_image(
+        {
+            "inputs": user_input,
+        }
+    )
     output = Image.open(io.BytesIO(image_bytes))
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=output, reply_to_message_id=update.message.message_id)
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=output,
+        reply_to_message_id=update.message.message_id,
+    )
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -80,7 +89,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         except:
             output_text = generated_text
 
-        await context.bot.send_message(chat_id=update.effective_chat.id, text=output_text, reply_to_message_id=update.message.message_id)
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=output_text,
+            reply_to_message_id=update.message.message_id,
+        )
 
 
 if __name__ == "__main__":
@@ -90,9 +103,7 @@ if __name__ == "__main__":
 
         # Set up the handlers
         start_handler = CommandHandler("bro", start)
-        chat_handler = MessageHandler(
-            filters.TEXT, start
-        )
+        chat_handler = MessageHandler(filters.TEXT, start)
         image_handler = CommandHandler("generate", image_generator)
 
         # Add the handlers to the application
