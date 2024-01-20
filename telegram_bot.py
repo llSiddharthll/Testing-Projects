@@ -36,8 +36,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_chat_action(
         chat_id=update.effective_chat.id, action="typing"
     )
-    for _ in range(5):  # Adjust the range based on the desired duration
-        await asyncio.sleep(1)  # Sleep for 1 second between typing actions
+    for _ in range(10):  # Adjust the range based on the desired duration
+        await asyncio.sleep(0.5)  # Sleep for 1 second between typing actions
         await context.bot.send_chat_action(
             chat_id=update.effective_chat.id, action="typing"
         )
@@ -48,9 +48,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         generated_text = output
 
     try:
-        output_index = generated_text.find("'output'")
+        if output_index:
+            output_index = generated_text.find("'output'")
+        else:
+            output_index = generated_text.find("<|assistant|>")
     except:
-        code_index = generated_text.find("<|assistant|>")
+        output_index = generated_text
     try:
         if output_index:
             output_text = generated_text[output_index + len("'output': '") :].strip(
@@ -58,7 +61,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
 
         else:
-            output_text = generated_text[code_index + len("<|assistant|>") :]
+            output_text = generated_text[output_index + len("<|assistant|>") :]
     except:
         output_text = "Sorry! ask me something else please"
 
