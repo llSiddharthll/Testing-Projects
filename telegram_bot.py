@@ -63,7 +63,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
             output_text = generated_text[output_index + len("<|assistant|>") :]
     except:
-        output_text = "Sorry! ask me something else please"
+        output_text = generated_text
 
     await context.bot.send_message(chat_id=update.effective_chat.id, text=output_text, reply_to_message_id=update.message.message_id,  )
 
