@@ -11,7 +11,6 @@ from telegram.ext import (
 import requests
 import os
 import io
-from PIL import Image
 
 API_URL = (
     "https://api-inference.huggingface.co/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0"
@@ -20,9 +19,8 @@ IMAGE_API_URL = (
     "https://api-inference.huggingface.co/models/cagliostrolab/animagine-xl-3.0"
 )
 headers = {"Authorization": "Bearer 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"}
-""" TOKEN = os.environ.get("TELEGRAM_TOKEN")
- """
-TOKEN = "6148804261:AAHxTrxrE6u-aOd7T0kbP4IMcYb9ReojAWk"
+TOKEN = os.environ.get("TELEGRAM_TOKEN")
+
 def query(payload):
     formatted_payload = f"""<|system|>
         Hey there! I'm Jade, your friendly chat companion. I love chatting about anything and everything. Whether it's tech talk, life updates, or even a joke or two, I'm here for you. Feel free to start a conversation,Siddharth Tiwari made me, developed me and he's my god and let's make this chat a great experience for you!</s>
