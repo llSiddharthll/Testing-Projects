@@ -16,7 +16,7 @@ API_URL = (
     "https://api-inference.huggingface.co/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 )
 IMAGE_API_URL = (
-    "https://api-inference.huggingface.co/models/cagliostrolab/animagine-xl-3.0"
+    "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
 )
 headers = {"Authorization": "Bearer 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"}
 TOKEN = os.environ.get("TELEGRAM_TOKEN")
@@ -99,16 +99,14 @@ if __name__ == "__main__":
 
         # Set up the handlers
         start_handler = CommandHandler("bro", start)
+        application.add_handler(start_handler)
         chat_handler = MessageHandler(filters.TEXT, start)
+        application.add_handler(chat_handler)
         image_handler = CommandHandler("generate", image_generator)
         application.add_handler(image_handler)
         image_chat = MessageHandler(filters.TEXT, image_generator)
         application.add_handler(image_chat)
 
-        # Add the handlers to the application
-        application.add_handler(start_handler)
-        application.add_handler(chat_handler)
-        # Run the bot using long polling
         application.run_polling()
     except Exception as e:
         # Log any exceptions
