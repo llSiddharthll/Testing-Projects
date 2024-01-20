@@ -37,22 +37,6 @@ def query_image(payload):
     response = requests.post(IMAGE_API_URL, headers=headers, json=payload)
     return response.content
 
-async def image_generator(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_input = update.message.text
-    if user_input.lower().startswith(("generate", "make")):
-        await context.bot.send_chat_action(
-            chat_id=update.effective_chat.id, action="typing"
-        )
-        image_bytes = query_image({"inputs": user_input})  
-        image = io.BytesIO(image_bytes)
-        image.seek(0)
-        await context.bot.send_photo(
-            chat_id=update.effective_chat.id,
-            photo=image,
-            reply_to_message_id=update.message.message_id,
-        )
-
-
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
@@ -91,6 +75,19 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_to_message_id=update.message.message_id,
         )
 
+    if user_input.lower().startswith(("generate", "make")):
+        await context.bot.send_chat_action(
+            chat_id=update.effective_chat.id, action="typing"
+        )
+        image_bytes = query_image({"inputs": user_input})  
+        image = io.BytesIO(image_bytes)
+        image.seek(0)
+        await context.bot.send_photo(
+            chat_id=update.effective_chat.id,
+            photo=image,
+            reply_to_message_id=update.message.message_id,
+        )
+
 
 if __name__ == "__main__":
     try:
@@ -102,10 +99,8 @@ if __name__ == "__main__":
         application.add_handler(start_handler)
         chat_handler = MessageHandler(filters.TEXT, start)
         application.add_handler(chat_handler)
-        image_handler = CommandHandler("generate", image_generator)
+        image_handler = CommandHandler("generate", start)
         application.add_handler(image_handler)
-        image_chat = MessageHandler(filters.TEXT, image_generator)
-        application.add_handler(image_chat)
 
         application.run_polling()
     except Exception as e:
