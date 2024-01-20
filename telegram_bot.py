@@ -33,7 +33,7 @@ def query(payload):
     return response.json()
 
 def query_image(payload):
-    response = requests.post(API_URL, headers=headers, json=payload)
+    response = requests.post(Image_API_URL, headers=headers, json=payload)
     return response.content
 
 
