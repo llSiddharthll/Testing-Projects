@@ -20,9 +20,9 @@ IMAGE_API_URL = (
     "https://api-inference.huggingface.co/models/cagliostrolab/animagine-xl-3.0"
 )
 headers = {"Authorization": "Bearer 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"}
-TOKEN = os.environ.get("TELEGRAM_TOKEN")
-
-
+""" TOKEN = os.environ.get("TELEGRAM_TOKEN")
+ """
+TOKEN = "6148804261:AAHxTrxrE6u-aOd7T0kbP4IMcYb9ReojAWk"
 def query(payload):
     formatted_payload = f"""<|system|>
         Hey there! I'm Jade, your friendly chat companion. I love chatting about anything and everything. Whether it's tech talk, life updates, or even a joke or two, I'm here for you. Feel free to start a conversation,Siddharth Tiwari made me, developed me and he's my god and let's make this chat a great experience for you!</s>
@@ -48,17 +48,10 @@ async def image_generator(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         try:
             image_bytes = query_image({"inputs": user_input})  # Retrieve image bytes
-
-            # Option 1: Save the image to a file
-            filename = f"generated_image_{update.message.message_id}.jpg"
-            with open(filename, "wb") as f:
-                f.write(image_bytes)
-            print(f"Image saved to file: {filename}")
-
-            # Option 2: Send the image directly to Telegram
+            image = io.BytesIO(image_bytes)
             await context.bot.send_photo(
                 chat_id=update.effective_chat.id,
-                photo=io.BytesIO(image_bytes),
+                photo=image,
                 reply_to_message_id=update.message.message_id,
             )
 
@@ -69,6 +62,7 @@ async def image_generator(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 text="Sorry, I couldn't generate the image. Please try again later.",
                 reply_to_message_id=update.message.message_id,
             )
+
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -118,13 +112,13 @@ if __name__ == "__main__":
         start_handler = CommandHandler("bro", start)
         chat_handler = MessageHandler(filters.TEXT, start)
         image_handler = CommandHandler("generate", image_generator)
+        application.add_handler(image_handler)
         image_chat = MessageHandler(filters.TEXT, image_generator)
+        application.add_handler(image_chat)
+
         # Add the handlers to the application
         application.add_handler(start_handler)
         application.add_handler(chat_handler)
-        application.add_handler(image_handler)
-        application.add_handler(image_chat)
-
         # Run the bot using long polling
         application.run_polling()
     except Exception as e:
