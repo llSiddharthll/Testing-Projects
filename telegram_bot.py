@@ -70,7 +70,7 @@ if __name__ == "__main__":
         # Set up the handlers
         start_handler = CommandHandler("bro", start)
         chat_handler = MessageHandler(
-            filters.TEXT & (filters.Mention | filters.REPLY), start
+            filters.TEXT & filters.Mention, start
         ) 
 
         # Add the handlers to the application
