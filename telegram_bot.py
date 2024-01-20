@@ -42,19 +42,20 @@ def query_image(payload):
 
 async def image_generator(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text
-    await context.bot.send_chat_action(
-        chat_id=update.effective_chat.id, action="typing"
-    )
-    image_bytes = query_image(
-        {
-            "inputs": user_input,
-        }
-    )
-    await context.bot.send_photo(
-        chat_id=update.effective_chat.id,
-        photo=io.BytesIO(image_bytes),
-        reply_to_message_id=update.message.message_id,
-    )
+    if user_input.lower().startswith(("generate","make")):
+        await context.bot.send_chat_action(
+            chat_id=update.effective_chat.id, action="typing"
+        )
+        image_bytes = query_image(
+            {
+                "inputs": user_input,
+            }
+        )
+        await context.bot.send_photo(
+            chat_id=update.effective_chat.id,
+            photo=io.BytesIO(image_bytes),
+            reply_to_message_id=update.message.message_id,
+        )
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -104,11 +105,12 @@ if __name__ == "__main__":
         start_handler = CommandHandler("bro", start)
         chat_handler = MessageHandler(filters.TEXT, start)
         image_handler = CommandHandler("generate", image_generator)
-
+        image_chat = MessageHandler(filters.TEXT, image_generator)
         # Add the handlers to the application
         application.add_handler(start_handler)
         application.add_handler(chat_handler)
         application.add_handler(image_handler)
+        application.add_handler(image_chat)
 
         # Run the bot using long polling
         application.run_polling()
