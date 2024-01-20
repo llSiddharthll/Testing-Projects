@@ -39,19 +39,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chat_id=update.effective_chat.id, action="typing"
     )
     output = query({"input": user_input})
-    try:
-        generated_text = output[0]["generated_text"]
-    except:
-        generated_text = output
+    generated_text = output
 
     try:
-        if output_index:
-            output_index = generated_text.find("'output'")
-        else:
-            output_index = generated_text.find("<|assistant|>")
+        output_index = generated_text.find("'output'")
     except:
-        output_index = generated_text
-        output_index = output_index.find("<|assistant|>")
+        output_index = generated_text.find("<|assistant|>")
     try:
         if output_index:
             output_text = generated_text[output_index + len("'output':'") :].strip(
