@@ -1,4 +1,4 @@
-
+import os
 import logging
 from telegram import Update
 from telegram.ext import (
@@ -11,15 +11,10 @@ from telegram.ext import (
 import requests
 import io
 
-API_URL = (
-    "https://api-inference.huggingface.co/models/openchat/openchat-3.5-0106"
-)
-IMAGE_API_URL = (
-    "https://api-inference.huggingface.co/models/dataautogpt3/ProteusV0.1"
-)
+API_URL = "https://api-inference.huggingface.co/models/openchat/openchat-3.5-0106"
+IMAGE_API_URL = "https://api-inference.huggingface.co/models/dataautogpt3/ProteusV0.1"
 headers = {"Authorization": "Bearer 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"}
-""" TOKEN = os.environ.get("TELEGRAM_TOKEN") """
-TOKEN = "6148804261:AAHxTrxrE6u-aOd7T0kbP4IMcYb9ReojAWk"
+TOKEN = os.environ.get("TELEGRAM_TOKEN")
 
 def query(payload):
     formatted_payload = f"""
