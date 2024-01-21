@@ -15,7 +15,7 @@ API_URL = (
     "https://api-inference.huggingface.co/models/openchat/openchat-3.5-0106"
 )
 IMAGE_API_URL = (
-    "https://api-inference.huggingface.co/models/cagliostrolab/animagine-xl-3.0"
+    "https://api-inference.huggingface.co/models/h94/IP-Adapter-FaceID"
 )
 headers = {"Authorization": "Bearer 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"}
 """ TOKEN = os.environ.get("TELEGRAM_TOKEN") """
