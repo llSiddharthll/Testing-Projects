@@ -56,7 +56,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif user_input.startswith(("generate", "make")):
         await context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
         try:
-            image_bytes = await query_image({"inputs": user_input})
+            image_bytes = query_image({"inputs": user_input})
             image = io.BytesIO(image_bytes)
             image.seek(0)
             await context.bot.send_photo(
