@@ -9,33 +9,30 @@ from telegram.ext import (
     MessageHandler,
 )
 import io
-import aiohttp
+import requests
 
 API_URL = "https://api-inference.huggingface.co/models/openchat/openchat-3.5-0106"
 IMAGE_API_URL = "https://api-inference.huggingface.co/models/segmind/Segmind-Vega"
 headers = {"Authorization": "Bearer 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"}
-TOKEN = os.environ.get("TELEGRAM_TOKEN")
+TOKEN = os.environ.get('DISCORD_TOKEN')
 
-
-async def query_text(payload):
+def query(payload):
     formatted_payload = f"""
         GPT4 Correct User: Hello<|end_of_turn|>
         GPT4 Correct Assistant: Hi<|end_of_turn|>
         GPT4 Correct User: What is your name?<|end_of_turn|>
-        GPT4 Correct Assistant: My name is Jade, I am a conversational bot made by Siddharth<|end_of_turn|>
+        GPT4 Correct Assistant: My name is "Itachi Uchiha" of the village "leaf", I am a conversational bot made by Siddharth<|end_of_turn|>
         GPT4 Correct User: {payload}<|end_of_turn|>
         GPT4 Correct Assistant: 
         """
-    async with aiohttp.ClientSession() as session:
-        async with session.post(API_URL, headers=headers, json={"inputs": formatted_payload}) as response:
-            return await response.json()
-
-
-async def query_image(payload):
-    async with aiohttp.ClientSession() as session:
-        async with session.post(IMAGE_API_URL, headers=headers, json=payload) as response:
-            return await response.read()
-
+    response = requests.post(
+        API_URL, headers=headers, json={"inputs": formatted_payload}
+    )
+    return response.json()
+	
+def query_image(payload):
+    response = requests.post(IMAGE_API_URL, headers=headers, json=payload)
+    return response.content
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text.lower()
@@ -44,7 +41,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
 
         user_input = ' '.join(user_input.split()[1:])
-        output = await query_text(user_input)
+        output = query(user_input)
         generated_text = output[0]["generated_text"]
         output_index = generated_text.find(user_input)
         output_text = generated_text[output_index + len(user_input):]
