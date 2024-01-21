@@ -12,7 +12,7 @@ import io
 import aiohttp
 
 API_URL = "https://api-inference.huggingface.co/models/openchat/openchat-3.5-0106"
-IMAGE_API_URL = "https://api-inference.huggingface.co/models/dataautogpt3/ProteusV0.1"
+IMAGE_API_URL = "https://api-inference.huggingface.co/models/segmind/SSD-1B"
 headers = {"Authorization": "Bearer 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"}
 TOKEN = os.environ.get("TELEGRAM_TOKEN")
 
