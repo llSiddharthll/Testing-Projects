@@ -74,9 +74,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 reply_to_message_id=update.message.message_id,
             )
         except:
-            await context.bot.send_photo(
+            await context.bot.send_message(
                 chat_id=update.effective_chat.id,
-                photo="Sorry I cannot generate it, try something else please!",
+                text="Sorry I cannot generate it, try something else please!",
                 reply_to_message_id=update.message.message_id,
             )
 
