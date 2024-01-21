@@ -12,7 +12,7 @@ import requests
 import io
 
 API_URL = (
-    "https://api-inference.huggingface.co/models/openchat/openchat-3.5-0106"
+    "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
 )
 IMAGE_API_URL = (
     "https://api-inference.huggingface.co/models/h94/IP-Adapter-FaceID"
