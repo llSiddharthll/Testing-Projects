@@ -37,16 +37,12 @@ async def query_image(payload):
             return await response.read()
 
 
-async def send_action_and_reply(context, chat_id, action, message_text, reply_to_message_id=None):
-    await context.bot.send_chat_action(chat_id=chat_id, action=action)
-    await context.bot.send_message(chat_id=chat_id, text=message_text, reply_to_message_id=reply_to_message_id)
-
-
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_input = update.message.text.lower()
 
     if user_input.startswith(("jade", "/bro", "bro", "bot")):
-        await send_action_and_reply(context, update.effective_chat.id, "")
+        await context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
+
         user_input = ' '.join(user_input.split()[1:])
         output = await query_text(user_input)
         generated_text = output[0]["generated_text"]
@@ -61,7 +57,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
     elif user_input.startswith(("generate", "make")):
-        await send_action_and_reply(context, update.effective_chat.id, "")
+        await context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
         try:
             image_bytes = await query_image({"inputs": user_input})
             image = io.BytesIO(image_bytes)
@@ -73,10 +69,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         except Exception as e:
             logging.error(f"Error generating image: {e}")
-            await send_action_and_reply(
-                context,
-                update.effective_chat.id,
-                "Sorry, I cannot generate it. Please try something else.",
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text = "Sorry, I cannot generate it. Please try something else.",
                 reply_to_message_id=update.message.message_id,
             )
 
