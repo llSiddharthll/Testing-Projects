@@ -77,7 +77,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await send_action_and_reply(
                 context,
                 update.effective_chat.id,
-                ChatAction.TYPING,
                 "Sorry, I cannot generate it. Please try something else.",
                 reply_to_message_id=update.message.message_id,
             )
