@@ -12,10 +12,10 @@ import requests
 import io
 
 API_URL = (
-    "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
+    "https://api-inference.huggingface.co/models/openchat/openchat-3.5-0106"
 )
 IMAGE_API_URL = (
-    "https://api-inference.huggingface.co/models/h94/IP-Adapter-FaceID"
+    "https://api-inference.huggingface.co/models/dataautogpt3/ProteusV0.1"
 )
 headers = {"Authorization": "Bearer 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"}
 """ TOKEN = os.environ.get("TELEGRAM_TOKEN") """
