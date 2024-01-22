@@ -55,20 +55,21 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif user_input.startswith(("generate", "make")):
         await context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
-
-        image_bytes = query_image({"inputs": user_input})
-        image = io.BytesIO(image_bytes)
-        image.seek(0)
-        if image:
-            await context.bot.send_photo(
-                chat_id=update.effective_chat.id,
-                photo=image,
-                reply_to_message_id=update.message.message_id,
-            )
-        else:
+        try:
+            image_bytes = query_image({"inputs": user_input})
+            image = io.BytesIO(image_bytes)
+            image.seek(0)
+            if image:
+                await context.bot.send_photo(
+                    chat_id=update.effective_chat.id,
+                    photo=image,
+                    reply_to_message_id=update.message.message_id,
+                )
+        except Exception as e:
+            logging.error(f"Error generating image: {e}")
             await context.bot.send_message(
                 chat_id=update.effective_chat.id,
-                text = "Sorry, I am loading the image generative model, kindly try to use it after 1 min.",
+                text = "Sorry, I am loading the generative AI model right now, please wait a min.",
                 reply_to_message_id=update.message.message_id,
             )
 
