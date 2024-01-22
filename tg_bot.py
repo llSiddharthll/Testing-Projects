@@ -14,7 +14,7 @@ import requests
 API_URL = "https://api-inference.huggingface.co/models/openchat/openchat-3.5-0106"
 IMAGE_API_URL = "https://api-inference.huggingface.co/models/segmind/Segmind-Vega"
 headers = {"Authorization": "Bearer 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"}
-TOKEN = os.environ.get('DISCORD_TOKEN')
+TOKEN = os.environ.get('TELEGRAM_TOKEN')
 
 def query(payload):
     formatted_payload = f"""
